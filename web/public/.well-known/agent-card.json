@@ -1,0 +1,68 @@
+{
+  "name": "Rent Relief Bot",
+  "description": "Pay-per-call tenant tools: landlord letters, lease-clause red flags, state tenant rights. USDC on Base via x402.",
+  "url": "https://rentrelief.markushaas.com",
+  "version": "1.0.0",
+  "documentationUrl": "https://rentrelief.markushaas.com/skill.md",
+  "provider": {
+    "organization": "Rent Relief Bot (open source)",
+    "url": "https://github.com/markusbug/rent-relief-bot"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false
+  },
+  "defaultInputModes": [
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "application/json"
+  ],
+  "skills": [
+    {
+      "id": "rent-letter",
+      "name": "rent-letter",
+      "description": "generate a ready-to-send tenant letter (rent-increase negotiation, repair demand, or security-deposit return) tailored to your US state.",
+      "tags": [
+        "tenant",
+        "housing",
+        "x402"
+      ],
+      "examples": [
+        "bankr x402 call https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad/rent-letter -X POST --body '{\"letter_type\":\"rent_increase\",\"tenant_name\":\"Sam Lee\",\"landlord_name\":\"Acme Property Management\",\"property_address\":\"12 Elm St Apt 4, Oakland CA\",\"state\":\"CA\",\"details\":\"Written notice on Sept 3 raising rent from 2100 to 2500 from Oct 1. Month-to-month, 3 years here, never late.\",\"current_rent\":2100,\"proposed_rent\":2500}'"
+      ]
+    },
+    {
+      "id": "lease-clause",
+      "name": "lease-clause",
+      "description": "explain a lease clause in plain English, flag red flags, and suggest edits to ask for, for your US state.",
+      "tags": [
+        "tenant",
+        "housing",
+        "x402"
+      ],
+      "examples": [
+        "bankr x402 call https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad/lease-clause -X POST --body '{\"clause\":\"Tenant shall be responsible for all repairs and maintenance of the premises, regardless of cause, and waives any claim against Landlord for habitability.\",\"state\":\"NY\"}'"
+      ]
+    },
+    {
+      "id": "tenant-rights",
+      "name": "tenant-rights",
+      "description": "quick summary of tenant protections in a US state on one topic (deposit, rent_increase, eviction, repairs, entry, lease_break, late_fees, retaliation).",
+      "tags": [
+        "tenant",
+        "housing",
+        "x402"
+      ],
+      "examples": [
+        "bankr x402 call \"https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad/tenant-rights?state=TX&topic=deposit\""
+      ]
+    }
+  ],
+  "x-x402": {
+    "baseUrl": "https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad",
+    "network": "eip155:8453",
+    "currency": "USDC",
+    "openapi": "https://rentrelief.markushaas.com/openapi.json"
+  }
+}

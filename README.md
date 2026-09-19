@@ -3,9 +3,10 @@
 **Your landlord has a lawyer. Now you have a bot.**
 
 Three tenant tools, paid per call in USDC on Base through [x402](https://x402.org). No account,
-no subscription, no gas. Humans use them at **[rentrelief.markushaas.com](https://rentrelief.markushaas.com)**;
-AI agents call the same endpoints on the [Bankr](https://bankr.bot) x402 marketplace. Every dollar
-of revenue is swapped into `$RRB` by a public GitHub Action.
+no subscription, no gas. Humans use them at **[rentrelief.markushaas.com](https://rentrelief.markushaas.com)**.
+AI agents use them by being pointed at the same domain: it publishes a skill, an OpenAPI
+description and `llms.txt`, and every tool is an x402 endpoint the agent can pay for itself.
+Every dollar of revenue is swapped into `$RRB` by a public GitHub Action.
 
 | Tool | Method | Price | What you get |
 |---|---|---|---|
@@ -44,11 +45,37 @@ web/                       Vite + React + Tailwind site; wagmi + viem + @x402/fe
 scripts/dev.mjs            runs the handlers locally on :8787 with CORS, no payment layer
 scripts/buyback.mjs        claims RRB creator fees, swaps USDC and WETH into RRB via the Bankr CLI
 scripts/x402-smoke.mjs     dry-runs the x402 flow against any URL without spending
+scripts/gen-agent-files.mjs  writes llms.txt, openapi.json, SKILL.md and .well-known files from bankr.x402.json
+skills/rent-relief-bot/    the agent skill (SKILL.md), installable from GitHub or from the domain
 .github/workflows/buyback.yml   hourly buyback (needs a secret and a repo variable to arm)
 firebase.json              Firebase Hosting config for web/dist
 ```
 
-## Use it as an agent
+## Bring your own agent
+
+The domain is the integration. Pick whichever your agent understands:
+
+| Agent | What to do |
+|---|---|
+| Any LLM agent | "Read https://rentrelief.markushaas.com/llms.txt and help me with my landlord." |
+| Claude Code, Cursor, OpenClaw, Codex | `npx skills add rentrelief.markushaas.com` (discovers `/.well-known/agent-skills/`) |
+| Bankr agent | "install the skill at https://github.com/markusbug/rent-relief-bot/tree/main/skills/rent-relief-bot" |
+| Any x402 client | Call the endpoints below and pay the 402 |
+
+Files the domain serves, all generated from `bankr.x402.json` by `scripts/gen-agent-files.mjs`
+so they cannot drift from the deployed prices and schemas:
+
+| Path | Purpose |
+|---|---|
+| `/llms.txt` | Plain-language guide for any agent that can read a URL |
+| `/skill.md` and `/.well-known/agent-skills/` | SKILL.md: when to use which tool, inputs, outputs, rules |
+| `/openapi.json` | OpenAPI 3.1 for the three endpoints, with the x402 price on each operation |
+| `/.well-known/agent-card.json` | A2A-style agent card |
+
+The skill teaches the agent to collect the inputs, quote the price, pay with `bankr x402 call`
+or any x402 v2 client, and fall back to sending the user to the site with the tool preselected.
+
+## Use it as an agent, by hand
 
 Endpoints are `https://x402.bankr.bot/<owner-wallet>/<service>`. With the Bankr CLI:
 
@@ -166,7 +193,8 @@ Checks before a PR: `npm run typecheck && npm run build`.
 
 > Rent Relief Bot is live. Three tenant tools, paid per call in USDC on Base, no account, no gas:
 > a rent-increase letter ($0.25), lease-clause red flags ($0.10), your state's tenant rights ($0.05).
-> Agents can call the same endpoints. Every dollar buys back $RRB, hourly, in public.
+> Or skip the site: point your AI agent at rentrelief.markushaas.com and it does the rest.
+> Every dollar buys back $RRB, hourly, in public.
 > Open source → github.com/markusbug/rent-relief-bot
 > Try it → rentrelief.markushaas.com
 

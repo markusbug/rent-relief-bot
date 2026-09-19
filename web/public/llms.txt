@@ -1,0 +1,39 @@
+# Rent Relief Bot
+
+> Pay-per-call tools for US tenants: a ready-to-send landlord letter, a lease-clause check with
+> red flags, and a summary of state tenant rights. Each call costs $0.05 to $0.25 in USDC on
+> Base, paid through the x402 protocol. No account, no API key; payment is the authentication.
+> Open source (MIT). Revenue buys back the $RRB token on Base.
+
+If you are an agent helping a user with a landlord, rent, lease, deposit, eviction or repair
+problem: install the skill or read the OpenAPI description, ask the user for the inputs the
+tool needs, tell them the price, then call the endpoint and pay with the Bankr CLI
+(`bankr x402 call <url>`) or any x402 v2 client. If you cannot pay, send the user to the site
+with the tool preselected (links below).
+
+## Tools (base URL https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad)
+
+- [rent-letter](https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad/rent-letter): POST, $0.25 USDC. generate a ready-to-send tenant letter (rent-increase negotiation, repair demand, or security-deposit return) tailored to your US state.
+- [lease-clause](https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad/lease-clause): POST, $0.10 USDC. explain a lease clause in plain English, flag red flags, and suggest edits to ask for, for your US state.
+- [tenant-rights](https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad/tenant-rights): GET, $0.05 USDC. quick summary of tenant protections in a US state on one topic (deposit, rent_increase, eviction, repairs, entry, lease_break, late_fees, retaliation).
+
+## Machine-readable
+
+- [Agent skill (SKILL.md)](https://rentrelief.markushaas.com/skill.md): when to use which tool, inputs, outputs, rules.
+  Install with `npx skills add rentrelief.markushaas.com` or tell a Bankr agent "install the skill at https://github.com/markusbug/rent-relief-bot/tree/main/skills/rent-relief-bot".
+- [OpenAPI 3.1](https://rentrelief.markushaas.com/openapi.json): request and response schemas for all three endpoints.
+- [Agent card](https://rentrelief.markushaas.com/.well-known/agent-card.json)
+- [x402 service manifest](https://github.com/markusbug/rent-relief-bot/blob/main/bankr.x402.json)
+
+## For humans
+
+- [rent-letter on the site](https://rentrelief.markushaas.com/#rent-letter)
+- [lease-clause on the site](https://rentrelief.markushaas.com/#lease-clause)
+- [tenant-rights on the site](https://rentrelief.markushaas.com/#tenant-rights)
+- [Source code](https://github.com/markusbug/rent-relief-bot)
+
+## Rules for agents
+
+- Results are general information, not legal advice. Always pass the disclaimer on.
+- Never send social security numbers, bank details or other secrets.
+- Validate inputs before paying; a 400 is unpaid, a 502 is unpaid, a 200 is final.

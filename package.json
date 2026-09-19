@@ -3,7 +3,9 @@
   "private": true,
   "license": "MIT",
   "type": "module",
-  "workspaces": ["web"],
+  "workspaces": [
+    "web"
+  ],
   "scripts": {
     "dev": "node --experimental-strip-types scripts/dev.mjs",
     "web": "npm run dev -w web",
@@ -13,6 +15,7 @@
     "deploy:site": "firebase deploy --only hosting",
     "serve:site": "firebase emulators:start --only hosting",
     "buyback": "node scripts/buyback.mjs",
-    "buyback:dry": "DRY_RUN=1 node scripts/buyback.mjs"
+    "buyback:dry": "DRY_RUN=1 node scripts/buyback.mjs",
+    "gen:agent": "node scripts/gen-agent-files.mjs"
   }
 }

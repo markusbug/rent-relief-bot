@@ -13,7 +13,7 @@ export function Header() {
           <a href="#tools" className="hover:text-white">Tools</a>
           <a href="#how" className="hover:text-white">How it works</a>
           <a href="#rrb" className="hover:text-white">$RRB</a>
-          <a href="#agents" className="hover:text-white">For agents</a>
+          <a href="#agents" className="hover:text-white">Bring your agent</a>
           <a href={siteConfig.githubUrl} target="_blank" rel="noreferrer" className="hover:text-white">GitHub</a>
         </nav>
         <WalletButton />

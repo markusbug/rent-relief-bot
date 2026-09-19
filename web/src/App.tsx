@@ -3,7 +3,7 @@ import { Hero } from "./components/landing/Hero";
 import { ToolTabs } from "./components/tools/ToolTabs";
 import { HowItWorks } from "./components/landing/HowItWorks";
 import { Flywheel } from "./components/landing/Flywheel";
-import { ForAgents } from "./components/landing/ForAgents";
+import { BringYourAgent } from "./components/landing/BringYourAgent";
 import { Footer } from "./components/landing/Footer";
 
 export default function App() {
@@ -13,9 +13,9 @@ export default function App() {
       <main className="mx-auto max-w-6xl px-4 sm:px-6">
         <Hero />
         <ToolTabs />
+        <BringYourAgent />
         <HowItWorks />
         <Flywheel />
-        <ForAgents />
         <Footer />
       </main>
     </>

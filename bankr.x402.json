@@ -5,87 +5,261 @@
     "rent-letter": {
       "price": "0.25",
       "description": "Rent Relief Bot: generate a ready-to-send tenant letter (rent-increase negotiation, repair demand, or security-deposit return) tailored to your US state.",
-      "methods": ["POST"],
+      "methods": [
+        "POST"
+      ],
       "schema": {
         "input": {
           "type": "object",
           "properties": {
-            "letter_type": { "type": "string", "enum": ["rent_increase", "repair_request", "deposit_return"], "description": "Kind of letter to write" },
-            "tenant_name": { "type": "string", "description": "Tenant's full name" },
-            "landlord_name": { "type": "string", "description": "Landlord or property manager name" },
-            "property_address": { "type": "string", "description": "Rental unit address" },
-            "state": { "type": "string", "description": "US state, e.g. CA or California" },
-            "details": { "type": "string", "description": "Plain-English description of the situation (max 4000 chars)" },
-            "current_rent": { "type": "number", "description": "Current monthly rent in USD (optional)" },
-            "proposed_rent": { "type": "number", "description": "Proposed new rent in USD, for rent_increase letters (optional)" },
-            "lease_start": { "type": "string", "description": "Lease start date, YYYY-MM-DD (optional)" },
-            "tone": { "type": "string", "enum": ["firm", "cooperative"], "description": "Letter tone (default firm)" }
+            "letter_type": {
+              "type": "string",
+              "enum": [
+                "rent_increase",
+                "repair_request",
+                "deposit_return"
+              ],
+              "description": "Kind of letter to write"
+            },
+            "tenant_name": {
+              "type": "string",
+              "description": "Tenant's full name"
+            },
+            "landlord_name": {
+              "type": "string",
+              "description": "Landlord or property manager name"
+            },
+            "property_address": {
+              "type": "string",
+              "description": "Rental unit address"
+            },
+            "state": {
+              "type": "string",
+              "description": "US state, e.g. CA or California"
+            },
+            "details": {
+              "type": "string",
+              "description": "Plain-English description of the situation (max 4000 chars)"
+            },
+            "current_rent": {
+              "type": "number",
+              "description": "Current monthly rent in USD (optional)"
+            },
+            "proposed_rent": {
+              "type": "number",
+              "description": "Proposed new rent in USD, for rent_increase letters (optional)"
+            },
+            "lease_start": {
+              "type": "string",
+              "description": "Lease start date, YYYY-MM-DD (optional)"
+            },
+            "tone": {
+              "type": "string",
+              "enum": [
+                "firm",
+                "cooperative"
+              ],
+              "description": "Letter tone (default firm)"
+            }
           },
-          "required": ["letter_type", "tenant_name", "landlord_name", "property_address", "state", "details"]
+          "required": [
+            "letter_type",
+            "tenant_name",
+            "landlord_name",
+            "property_address",
+            "state",
+            "details"
+          ]
         },
         "output": {
           "type": "object",
           "properties": {
-            "subject": { "type": "string" },
-            "letter": { "type": "string", "description": "Full letter body, ready to send" },
-            "key_points": { "type": "array", "items": { "type": "string" } },
-            "next_steps": { "type": "array", "items": { "type": "string" } },
-            "disclaimer": { "type": "string" }
+            "subject": {
+              "type": "string"
+            },
+            "letter": {
+              "type": "string",
+              "description": "Full letter body, ready to send"
+            },
+            "key_points": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "disclaimer": {
+              "type": "string"
+            }
           }
         }
-      }
+      },
+      "tags": [
+        "tenant",
+        "housing",
+        "rent",
+        "landlord",
+        "letter",
+        "legal-info"
+      ]
     },
     "lease-clause": {
       "price": "0.10",
       "description": "Rent Relief Bot: explain a lease clause in plain English, flag red flags, and suggest edits to ask for, for your US state.",
-      "methods": ["POST"],
+      "methods": [
+        "POST"
+      ],
       "schema": {
         "input": {
           "type": "object",
           "properties": {
-            "clause": { "type": "string", "description": "Verbatim lease clause text (20 to 6000 chars)" },
-            "state": { "type": "string", "description": "US state, e.g. NY or New York" },
-            "context": { "type": "string", "description": "Optional extra context about your situation" }
+            "clause": {
+              "type": "string",
+              "description": "Verbatim lease clause text (20 to 6000 chars)"
+            },
+            "state": {
+              "type": "string",
+              "description": "US state, e.g. NY or New York"
+            },
+            "context": {
+              "type": "string",
+              "description": "Optional extra context about your situation"
+            }
           },
-          "required": ["clause", "state"]
+          "required": [
+            "clause",
+            "state"
+          ]
         },
         "output": {
           "type": "object",
           "properties": {
-            "plain_english": { "type": "string" },
-            "what_it_means_for_you": { "type": "array", "items": { "type": "string" } },
-            "red_flags": { "type": "array", "items": { "type": "object", "properties": { "severity": { "type": "string" }, "issue": { "type": "string" }, "why": { "type": "string" } } } },
-            "negotiation_asks": { "type": "array", "items": { "type": "string" } },
-            "disclaimer": { "type": "string" }
+            "plain_english": {
+              "type": "string"
+            },
+            "what_it_means_for_you": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "red_flags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "severity": {
+                    "type": "string"
+                  },
+                  "issue": {
+                    "type": "string"
+                  },
+                  "why": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "negotiation_asks": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "disclaimer": {
+              "type": "string"
+            }
           }
         }
-      }
+      },
+      "tags": [
+        "tenant",
+        "housing",
+        "lease",
+        "contract",
+        "legal-info"
+      ]
     },
     "tenant-rights": {
       "price": "0.05",
       "description": "Rent Relief Bot: quick summary of tenant protections in a US state on one topic (deposit, rent_increase, eviction, repairs, entry, lease_break, late_fees, retaliation).",
-      "methods": ["GET"],
+      "methods": [
+        "GET"
+      ],
       "schema": {
         "input": {
           "type": "object",
           "properties": {
-            "state": { "type": "string", "description": "US state, e.g. TX or Texas" },
-            "topic": { "type": "string", "enum": ["deposit", "rent_increase", "eviction", "repairs", "entry", "lease_break", "late_fees", "retaliation"], "description": "Topic to summarise" }
+            "state": {
+              "type": "string",
+              "description": "US state, e.g. TX or Texas"
+            },
+            "topic": {
+              "type": "string",
+              "enum": [
+                "deposit",
+                "rent_increase",
+                "eviction",
+                "repairs",
+                "entry",
+                "lease_break",
+                "late_fees",
+                "retaliation"
+              ],
+              "description": "Topic to summarise"
+            }
           },
-          "required": ["state", "topic"]
+          "required": [
+            "state",
+            "topic"
+          ]
         },
         "output": {
           "type": "object",
           "properties": {
-            "summary": { "type": "string" },
-            "key_rules": { "type": "array", "items": { "type": "string" } },
-            "common_landlord_violations": { "type": "array", "items": { "type": "string" } },
-            "where_to_get_help": { "type": "array", "items": { "type": "string" } },
-            "confidence": { "type": "string" },
-            "disclaimer": { "type": "string" }
+            "summary": {
+              "type": "string"
+            },
+            "key_rules": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "common_landlord_violations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "where_to_get_help": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "confidence": {
+              "type": "string"
+            },
+            "disclaimer": {
+              "type": "string"
+            }
           }
         }
-      }
+      },
+      "tags": [
+        "tenant",
+        "housing",
+        "rights",
+        "deposit",
+        "eviction",
+        "legal-info"
+      ]
     }
   }
 }

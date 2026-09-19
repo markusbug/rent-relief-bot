@@ -1,0 +1,397 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Rent Relief Bot",
+    "version": "1.0.0",
+    "summary": "Pay-per-call tenant tools on Base via x402.",
+    "description": "Rent-increase, repair and deposit letters; lease-clause red flags; state tenant rights. Each call is paid in USDC through the x402 protocol; there is no API key. Informational only, not legal advice.",
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/markusbug/rent-relief-bot/blob/main/LICENSE"
+    },
+    "contact": {
+      "url": "https://rentrelief.markushaas.com"
+    }
+  },
+  "externalDocs": {
+    "url": "https://rentrelief.markushaas.com/skill.md",
+    "description": "Agent skill with usage guidance"
+  },
+  "servers": [
+    {
+      "url": "https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad",
+      "description": "Bankr x402 endpoints (Base mainnet)"
+    }
+  ],
+  "paths": {
+    "/rent-letter": {
+      "post": {
+        "operationId": "rentLetter",
+        "summary": "generate a ready-to-send tenant letter (rent-increase negotiation, repair demand, or security-deposit return) tailored to your US state.",
+        "description": "Costs $0.25 USDC per call via x402 (HTTP 402 challenge, USDC TransferWithAuthorization on Base, chain 8453). Pay with `bankr x402 call` or any x402 v2 client.",
+        "x-x402": {
+          "price": "0.25",
+          "currency": "USDC",
+          "network": "eip155:8453",
+          "scheme": "exact"
+        },
+        "responses": {
+          "200": {
+            "description": "Result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "subject": {
+                      "type": "string"
+                    },
+                    "letter": {
+                      "type": "string",
+                      "description": "Full letter body, ready to send"
+                    },
+                    "key_points": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "next_steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (not charged)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required. The `payment-required` header carries the x402 v2 requirements."
+          },
+          "502": {
+            "description": "Upstream model failure (not charged). Retry once."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "letter_type": {
+                    "type": "string",
+                    "enum": [
+                      "rent_increase",
+                      "repair_request",
+                      "deposit_return"
+                    ],
+                    "description": "Kind of letter to write"
+                  },
+                  "tenant_name": {
+                    "type": "string",
+                    "description": "Tenant's full name"
+                  },
+                  "landlord_name": {
+                    "type": "string",
+                    "description": "Landlord or property manager name"
+                  },
+                  "property_address": {
+                    "type": "string",
+                    "description": "Rental unit address"
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "US state, e.g. CA or California"
+                  },
+                  "details": {
+                    "type": "string",
+                    "description": "Plain-English description of the situation (max 4000 chars)"
+                  },
+                  "current_rent": {
+                    "type": "number",
+                    "description": "Current monthly rent in USD (optional)"
+                  },
+                  "proposed_rent": {
+                    "type": "number",
+                    "description": "Proposed new rent in USD, for rent_increase letters (optional)"
+                  },
+                  "lease_start": {
+                    "type": "string",
+                    "description": "Lease start date, YYYY-MM-DD (optional)"
+                  },
+                  "tone": {
+                    "type": "string",
+                    "enum": [
+                      "firm",
+                      "cooperative"
+                    ],
+                    "description": "Letter tone (default firm)"
+                  }
+                },
+                "required": [
+                  "letter_type",
+                  "tenant_name",
+                  "landlord_name",
+                  "property_address",
+                  "state",
+                  "details"
+                ]
+              },
+              "example": {
+                "letter_type": "rent_increase",
+                "tenant_name": "Sam Lee",
+                "landlord_name": "Acme Property Management",
+                "property_address": "12 Elm St Apt 4, Oakland CA",
+                "state": "CA",
+                "details": "Written notice on Sept 3 raising rent from 2100 to 2500 from Oct 1. Month-to-month, 3 years here, never late.",
+                "current_rent": 2100,
+                "proposed_rent": 2500
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lease-clause": {
+      "post": {
+        "operationId": "leaseClause",
+        "summary": "explain a lease clause in plain English, flag red flags, and suggest edits to ask for, for your US state.",
+        "description": "Costs $0.10 USDC per call via x402 (HTTP 402 challenge, USDC TransferWithAuthorization on Base, chain 8453). Pay with `bankr x402 call` or any x402 v2 client.",
+        "x-x402": {
+          "price": "0.10",
+          "currency": "USDC",
+          "network": "eip155:8453",
+          "scheme": "exact"
+        },
+        "responses": {
+          "200": {
+            "description": "Result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "plain_english": {
+                      "type": "string"
+                    },
+                    "what_it_means_for_you": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "red_flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "severity": {
+                            "type": "string"
+                          },
+                          "issue": {
+                            "type": "string"
+                          },
+                          "why": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "negotiation_asks": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (not charged)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required. The `payment-required` header carries the x402 v2 requirements."
+          },
+          "502": {
+            "description": "Upstream model failure (not charged). Retry once."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "clause": {
+                    "type": "string",
+                    "description": "Verbatim lease clause text (20 to 6000 chars)"
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "US state, e.g. NY or New York"
+                  },
+                  "context": {
+                    "type": "string",
+                    "description": "Optional extra context about your situation"
+                  }
+                },
+                "required": [
+                  "clause",
+                  "state"
+                ]
+              },
+              "example": {
+                "clause": "Tenant shall be responsible for all repairs and maintenance of the premises, regardless of cause, and waives any claim against Landlord for habitability.",
+                "state": "NY"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tenant-rights": {
+      "get": {
+        "operationId": "tenantRights",
+        "summary": "quick summary of tenant protections in a US state on one topic (deposit, rent_increase, eviction, repairs, entry, lease_break, late_fees, retaliation).",
+        "description": "Costs $0.05 USDC per call via x402 (HTTP 402 challenge, USDC TransferWithAuthorization on Base, chain 8453). Pay with `bankr x402 call` or any x402 v2 client.",
+        "x-x402": {
+          "price": "0.05",
+          "currency": "USDC",
+          "network": "eip155:8453",
+          "scheme": "exact"
+        },
+        "responses": {
+          "200": {
+            "description": "Result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "summary": {
+                      "type": "string"
+                    },
+                    "key_rules": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "common_landlord_violations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "where_to_get_help": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "confidence": {
+                      "type": "string"
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (not charged)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required. The `payment-required` header carries the x402 v2 requirements."
+          },
+          "502": {
+            "description": "Upstream model failure (not charged). Retry once."
+          }
+        },
+        "parameters": [
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "US state, e.g. TX or Texas"
+          },
+          {
+            "name": "topic",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "deposit",
+                "rent_increase",
+                "eviction",
+                "repairs",
+                "entry",
+                "lease_break",
+                "late_fees",
+                "retaliation"
+              ]
+            },
+            "description": "Topic to summarise"
+          }
+        ]
+      }
+    }
+  }
+}
