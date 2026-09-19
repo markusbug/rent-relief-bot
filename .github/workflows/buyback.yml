@@ -1,0 +1,54 @@
+name: RRB buyback
+
+# Recycles x402 revenue (USDC) and claimed creator fees (WETH) into $RRB.
+# Needs:
+#   secret   BANKR_API_KEY     a dedicated Bankr key with ONLY the Wallet API enabled, read-write
+#   variable BUYBACK_ENABLED   set to "true" to arm the hourly schedule (forks stay silent)
+# Optional variables override script defaults: RRB_ADDRESS, USDC_RESERVE, WETH_RESERVE,
+# MAX_SWAP_USD, MIN_SWAP_USD, CLAIM_FEES.
+
+on:
+  schedule:
+    - cron: "7 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Print the plan without swapping"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: buyback
+  cancel-in-progress: false
+
+jobs:
+  buyback:
+    if: github.event_name == 'workflow_dispatch' || vars.BUYBACK_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Bankr CLI
+        run: npm install -g @bankr/cli
+      - name: Log in
+        env:
+          BANKR_API_KEY: ${{ secrets.BANKR_API_KEY }}
+        run: |
+          if [ -z "$BANKR_API_KEY" ]; then echo "BANKR_API_KEY secret is not set"; exit 1; fi
+          bankr login --api-key "$BANKR_API_KEY"
+      - name: Run buyback
+        env:
+          DRY_RUN: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '1' || '0' }}
+          RRB_ADDRESS: ${{ vars.RRB_ADDRESS }}
+          USDC_RESERVE: ${{ vars.USDC_RESERVE }}
+          WETH_RESERVE: ${{ vars.WETH_RESERVE }}
+          MAX_SWAP_USD: ${{ vars.MAX_SWAP_USD }}
+          MIN_SWAP_USD: ${{ vars.MIN_SWAP_USD }}
+          CLAIM_FEES: ${{ vars.CLAIM_FEES }}
+        run: node scripts/buyback.mjs
