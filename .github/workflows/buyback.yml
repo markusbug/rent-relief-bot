@@ -1,6 +1,7 @@
 name: RRB buyback
 
 # Recycles x402 revenue (USDC) and claimed creator fees (WETH) into $RRB.
+# Schedule: hourly at :07 UTC (GitHub cron is best-effort and may lag).
 # Needs:
 #   secret   BANKR_API_KEY     a dedicated Bankr key with ONLY the Wallet API enabled, read-write
 #   variable BUYBACK_ENABLED   set to "true" to arm the hourly schedule (forks stay silent)
