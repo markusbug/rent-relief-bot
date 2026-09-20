@@ -1,8 +1,8 @@
 # Rent Relief Bot
 
-> Pay-per-call tools for US tenants: a ready-to-send landlord letter, a lease-clause check with
-> red flags, a whole-lease scan ranked worst first, and a summary of state tenant rights. Each
-> call costs $0.05 to $0.50 in USDC on
+> Pay-per-call tools for US tenants: a decoder for any landlord notice, a ready-to-send
+> landlord letter, a lease-clause check with red flags, a whole-lease scan ranked worst first,
+> and a summary of state tenant rights. Each call costs $0.02 to $0.50 in USDC on
 > Base, paid through the x402 protocol. No account, no API key; payment is the authentication.
 > Open source (MIT).
 
@@ -14,6 +14,7 @@ with the tool preselected (links below).
 
 ## Tools (base URL https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad)
 
+- [notice-decoder](https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad/notice-decoder): POST, $0.02 USDC. paste anything your landlord sent you (letter, email, text). One Jev call says what kind of notice it is, how urgent, whether it threatens something landlords cannot do, and which tool to use next. Typed decisions, no text generation.
 - [rent-letter](https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad/rent-letter): POST, $0.25 USDC. generate a ready-to-send tenant letter (rent-increase negotiation, repair demand, or security-deposit return) tailored to your US state.
 - [lease-clause](https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad/lease-clause): POST, $0.10 USDC. explain a lease clause in plain English, flag red flags, and suggest edits to ask for, for your US state.
 - [lease-scan](https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad/lease-scan): POST, $0.50 USDC. scan a whole residential lease and rank the clauses a tenant should push back on before signing. Every clause is classified by Jev (TypeSafe's System One model): typed decisions with calibrated confidence, no text generation, no hallucinated law.
@@ -29,6 +30,7 @@ with the tool preselected (links below).
 
 ## For humans
 
+- [notice-decoder on the site](https://rentrelief.markushaas.com/#notice-decoder)
 - [rent-letter on the site](https://rentrelief.markushaas.com/#rent-letter)
 - [lease-clause on the site](https://rentrelief.markushaas.com/#lease-clause)
 - [lease-scan on the site](https://rentrelief.markushaas.com/#lease-scan)

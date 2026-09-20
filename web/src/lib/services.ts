@@ -2,7 +2,7 @@ import manifest from "../../../bankr.x402.json";
 import { parseUnits } from "viem";
 import { siteConfig } from "../site.config";
 
-export type ServiceId = "rent-letter" | "lease-clause" | "lease-scan" | "tenant-rights";
+export type ServiceId = "notice-decoder" | "rent-letter" | "lease-clause" | "lease-scan" | "tenant-rights";
 
 export interface ServiceDef {
   id: ServiceId;
@@ -16,6 +16,7 @@ export interface ServiceDef {
 }
 
 const TITLES: Record<ServiceId, { title: string; short: string }> = {
+  "notice-decoder": { title: "Notice decoder", short: "What did my landlord just send me?" },
   "rent-letter": { title: "Rent letter", short: "Ready-to-send landlord letter" },
   "lease-clause": { title: "Lease clause check", short: "Plain English plus red flags" },
   "lease-scan": { title: "Whole-lease scan", short: "Every clause ranked, worst first" },
@@ -45,13 +46,20 @@ function def(id: ServiceId): ServiceDef {
 }
 
 export const SERVICES: Record<ServiceId, ServiceDef> = {
+  "notice-decoder": def("notice-decoder"),
   "rent-letter": def("rent-letter"),
   "lease-clause": def("lease-clause"),
   "lease-scan": def("lease-scan"),
   "tenant-rights": def("tenant-rights"),
 };
 
-export const SERVICE_LIST: ServiceDef[] = [SERVICES["rent-letter"], SERVICES["lease-clause"], SERVICES["lease-scan"], SERVICES["tenant-rights"]];
+export const SERVICE_LIST: ServiceDef[] = [
+  SERVICES["notice-decoder"],
+  SERVICES["rent-letter"],
+  SERVICES["lease-clause"],
+  SERVICES["lease-scan"],
+  SERVICES["tenant-rights"],
+];
 
 export const MAX_PRICE_USD = SERVICE_LIST.reduce((m, s) => Math.max(m, Number(s.price)), 0);
 
@@ -163,3 +171,23 @@ export const SCAN_TOPIC_LABELS: Record<string, string> = {
   utilities_and_services: "Utilities",
   other: "Other",
 };
+
+export interface DecodeOut {
+  kind: string;
+  kind_label: string;
+  kind_confidence: number;
+  alternatives: { kind: string; label: string; probability: number }[];
+  urgency: 0 | 1 | 2 | 3;
+  urgency_label: "low" | "medium" | "high" | "urgent";
+  urgency_confidence: number;
+  flags: { id: string; label: string; probability: number; why: string }[];
+  what_it_means: string;
+  do_next: string;
+  get_help_now: string | null;
+  mentions: { dates: string[]; amounts: string[]; day_counts: string[] };
+  next_tool: { id: ServiceId; input: Record<string, string>; url: string };
+  disclaimer: string;
+  state: string;
+  model: string;
+  generated_at: string;
+}

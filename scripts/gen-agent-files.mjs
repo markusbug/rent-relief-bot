@@ -65,6 +65,11 @@ function schemaLines(schema) {
 }
 
 const examples = {
+  "notice-decoder": {
+    notice:
+      "hey its mike the landlord. u still havent paid for this month. if i dont have it by friday im changing the locks and putting ur stuff on the curb. also ur always complaining to the city about the heat so dont expect me to renew",
+    state: "NY",
+  },
   "rent-letter": {
     letter_type: "rent_increase",
     tenant_name: "Sam Lee",
@@ -98,7 +103,7 @@ function curlFor(s) {
 // ---------- SKILL.md ----------
 const skillMd = `---
 name: rent-relief-bot
-description: Help a tenant deal with a landlord using Rent Relief Bot's paid x402 tools (rent-increase, repair and deposit letters; lease-clause red flags; whole-lease scan; state tenant rights). Use when the user mentions rent, a landlord, a lease, a security deposit, eviction, repairs, or tenant rights in the US.
+description: Help a tenant deal with a landlord using Rent Relief Bot's paid x402 tools (decode any landlord notice; rent-increase, repair and deposit letters; lease-clause red flags; whole-lease scan; state tenant rights). Use when the user mentions rent, a landlord, a lease, a security deposit, eviction, repairs, or tenant rights in the US.
 version: 1
 visibility: public
 tags: [tenants, housing, rent, lease, x402, base, legal-info, jev]
@@ -112,7 +117,7 @@ metadata:
 
 # Rent Relief Bot
 
-Four pay-per-call tools for US tenants, served as x402 endpoints on Base. Each call costs a
+Five pay-per-call tools for US tenants, served as x402 endpoints on Base. Each call costs a
 few cents in USDC and returns structured JSON. No account or API key is needed to call them:
 payment is the authentication.
 
@@ -124,6 +129,11 @@ Base URL: \`${API}\`
 
 ## When to use which tool
 
+- The user pastes or describes something the landlord sent them (letter, email, text, court
+  paper) and it is not yet clear what it is → **notice-decoder** first ($0.02). It returns the
+  kind of notice, urgency, red flags (lockout threat, retaliation, missing basics), and
+  \`next_tool\` with the input already filled in. Follow \`next_tool\`. If \`get_help_now\` is
+  set, tell the user to contact legal aid today before anything else.
 - "My rent is going up", "my landlord won't fix", "I want my deposit back" → **rent-letter**.
   Collect: letter_type, tenant name, landlord name, property address, state, and a plain
   description of what happened with dates. Ask for current and proposed rent when relevant.
@@ -172,6 +182,9 @@ All responses are JSON and include \`disclaimer\` (informational, not legal advi
   \`key_points[]\`, \`next_steps[]\`.
 - lease-clause: \`plain_english\`, \`what_it_means_for_you[]\`, \`red_flags[] {severity, issue, why}\`,
   \`negotiation_asks[]\`.
+- notice-decoder: \`kind\`, \`kind_label\`, \`urgency\` 0-3, \`flags[] {id, label, probability, why}\`,
+  \`what_it_means\`, \`do_next\`, \`get_help_now\` (string or null), \`mentions {dates[], amounts[], day_counts[]}\`
+  (regex-extracted, not interpreted), \`next_tool {id, input, url}\`.
 - lease-scan: \`summary {clauses_scanned, flagged, serious, topics, overall}\`,
   \`findings[] {clause_number, topic, risk 0-4, risk_label, confidence, flags[] {id, label, probability, why, ask}, excerpt}\`
   sorted worst first, \`next_step\`. Only clauses with risk ≥ 2 or a flag ≥ 0.6 are listed.
@@ -183,7 +196,7 @@ All responses are JSON and include \`disclaimer\` (informational, not legal advi
 - Present results as general information, never as legal advice. Keep the disclaimer.
 - Do not send social security numbers, bank details or other secrets in \`details\` or \`clause\`.
 - Validate inputs before paying: enums must match, \`details\` ≤ 4000 chars, \`clause\` 20 to
-  6000 chars, \`lease\` 200 to 60000 chars. The endpoint returns 400 (unpaid) on bad input.
+  6000 chars, \`lease\` 200 to 60000 chars, \`notice\` 40 to 12000 chars. The endpoint returns 400 (unpaid) on bad input.
 - Tell the user the price before calling. Calls are settled per request; there are no refunds
   for a valid response.
 - A 502 means the model call failed and the user was not charged. Retry once.
@@ -206,7 +219,7 @@ write(
         {
           name: "rent-relief-bot",
           description:
-            "Help a tenant deal with a landlord: rent-increase, repair and deposit letters, lease-clause red flags, a whole-lease scan, and state tenant rights, paid per call in USDC on Base via x402.",
+            "Help a tenant deal with a landlord: decode any notice, rent-increase, repair and deposit letters, lease-clause red flags, a whole-lease scan, and state tenant rights, paid per call in USDC on Base via x402.",
           files: ["SKILL.md"],
         },
       ],
@@ -221,9 +234,9 @@ write(
   "web/public/llms.txt",
   `# Rent Relief Bot
 
-> Pay-per-call tools for US tenants: a ready-to-send landlord letter, a lease-clause check with
-> red flags, a whole-lease scan ranked worst first, and a summary of state tenant rights. Each
-> call costs $0.05 to $0.50 in USDC on
+> Pay-per-call tools for US tenants: a decoder for any landlord notice, a ready-to-send
+> landlord letter, a lease-clause check with red flags, a whole-lease scan ranked worst first,
+> and a summary of state tenant rights. Each call costs $0.02 to $0.50 in USDC on
 > Base, paid through the x402 protocol. No account, no API key; payment is the authentication.
 > Open source (MIT).
 
@@ -296,7 +309,7 @@ write(
         title: "Rent Relief Bot",
         version: "1.0.0",
         summary: "Pay-per-call tenant tools on Base via x402.",
-        description: "Rent-increase, repair and deposit letters; lease-clause red flags; whole-lease scan; state tenant rights. Each call is paid in USDC through the x402 protocol; there is no API key. Informational only, not legal advice.",
+        description: "Notice decoder; rent-increase, repair and deposit letters; lease-clause red flags; whole-lease scan; state tenant rights. Each call is paid in USDC through the x402 protocol; there is no API key. Informational only, not legal advice.",
         license: { name: "MIT", url: `${GITHUB}/blob/main/LICENSE` },
         contact: { url: SITE },
       },
@@ -315,7 +328,7 @@ write(
   JSON.stringify(
     {
       name: "Rent Relief Bot",
-      description: "Pay-per-call tenant tools: landlord letters, lease-clause red flags, whole-lease scan, state tenant rights. USDC on Base via x402.",
+      description: "Pay-per-call tenant tools: notice decoder, landlord letters, lease-clause red flags, whole-lease scan, state tenant rights. USDC on Base via x402.",
       url: SITE,
       version: "1.0.0",
       documentationUrl: `${SITE}/skill.md`,

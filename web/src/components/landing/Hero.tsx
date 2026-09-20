@@ -15,7 +15,7 @@ export function Hero() {
           href="#jev"
           className="inline-flex items-center gap-2 rounded-full border border-violet-400/40 bg-violet-500/10 px-3 py-1 text-xs font-semibold text-violet-200 hover:bg-violet-500/20"
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-violet-400" /> New: whole-lease scan, powered by Jev →
+          <span className="h-1.5 w-1.5 rounded-full bg-violet-400" /> New: notice decoder + lease scan, powered by Jev →
         </a>
       </div>
       <h1 className="max-w-3xl text-4xl font-black tracking-tight text-white sm:text-6xl">
@@ -30,7 +30,7 @@ export function Hero() {
           Or point your agent at {host} →
         </a>
       </div>
-      <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {SERVICE_LIST.map((s) => (
           <a
             key={s.id}

@@ -2,6 +2,184 @@
   "network": "base",
   "currency": "USDC",
   "services": {
+    "notice-decoder": {
+      "price": "0.02",
+      "description": "Rent Relief Bot: paste anything your landlord sent you (letter, email, text). One Jev call says what kind of notice it is, how urgent, whether it threatens something landlords cannot do, and which tool to use next. Typed decisions, no text generation.",
+      "methods": [
+        "POST"
+      ],
+      "tags": [
+        "tenants",
+        "housing",
+        "notice",
+        "eviction",
+        "x402",
+        "jev",
+        "typesafe"
+      ],
+      "schema": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "notice": {
+              "type": "string",
+              "description": "The text you received, as-is (40 to 12000 chars). Letter, email, text message, or a court paper."
+            },
+            "state": {
+              "type": "string",
+              "description": "US state, e.g. CA or California"
+            }
+          },
+          "required": [
+            "notice",
+            "state"
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "rent_increase",
+                "pay_or_quit",
+                "cure_or_quit",
+                "termination_or_nonrenewal",
+                "court_filing",
+                "entry_notice",
+                "fee_or_charge",
+                "deposit_statement",
+                "repair_or_maintenance",
+                "renewal_offer",
+                "warning_or_rules",
+                "other"
+              ]
+            },
+            "kind_label": {
+              "type": "string"
+            },
+            "kind_confidence": {
+              "type": "number"
+            },
+            "alternatives": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "probability": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "urgency": {
+              "type": "integer",
+              "description": "0 low \u2026 3 urgent"
+            },
+            "urgency_label": {
+              "type": "string",
+              "enum": [
+                "low",
+                "medium",
+                "high",
+                "urgent"
+              ]
+            },
+            "urgency_confidence": {
+              "type": "number"
+            },
+            "flags": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "probability": {
+                    "type": "number"
+                  },
+                  "why": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "what_it_means": {
+              "type": "string"
+            },
+            "do_next": {
+              "type": "string"
+            },
+            "get_help_now": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Set when the tenant should contact legal aid today"
+            },
+            "mentions": {
+              "type": "object",
+              "properties": {
+                "dates": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "amounts": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "day_counts": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "next_tool": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "input": {
+                  "type": "object"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            },
+            "disclaimer": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            },
+            "generated_at": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "rent-letter": {
       "price": "0.25",
       "description": "Rent Relief Bot: generate a ready-to-send tenant letter (rent-increase negotiation, repair demand, or security-deposit return) tailored to your US state.",

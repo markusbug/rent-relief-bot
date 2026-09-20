@@ -6,20 +6,21 @@
 [OpenRouter](https://openrouter.ai/~typesafe/jev-latest).** Paste a lease, get every clause scored and
 ranked worst first in about a second. Jev returns typed decisions, not text, so it cannot invent a law.
 
-Four tenant tools, paid per call in USDC on Base through [x402](https://x402.org). No account,
+Five tenant tools, paid per call in USDC on Base through [x402](https://x402.org). No account,
 no subscription, no gas. Humans use them at **[rentrelief.markushaas.com](https://rentrelief.markushaas.com)**.
 AI agents use them by being pointed at the same domain: it publishes a skill, an OpenAPI
 description and `llms.txt`, and every tool is an x402 endpoint the agent can pay for itself.
 
 | Tool | Method | Price | What you get |
 |---|---|---|---|
+| `notice-decoder` | POST | $0.02 | Paste anything your landlord sent. What kind of notice it is, how urgent, red flags (lockout threat, retaliation, missing basics), dates and amounts pulled from the text, and which tool to use next. One Jev call. |
 | `rent-letter` | POST | $0.25 | A ready-to-send letter: push back on a rent increase, demand repairs, or get a deposit back. Plus your leverage and next steps. |
 | `lease-clause` | POST | $0.10 | A lease clause in plain English, red flags ranked by severity, and edits to ask for. |
 | `lease-scan` | POST | $0.50 | The whole lease, every clause scored and ranked worst first, with flags (lockout without court, waived rights, penalty fees…) and what to ask for. Classified by [Jev](https://typesafe.ai), no text generation, so it cannot invent law. |
 | `tenant-rights` | GET | $0.05 | State tenant protections on one topic: deposits, rent increases, eviction, repairs, entry, lease breaks, late fees, retaliation. |
 
 Every answer carries a not-legal-advice disclaimer and never invents statute numbers. Three tools
-write with Claude through Bankr's LLM gateway; `lease-scan` asks Jev, TypeSafe's System One
+write with Claude through Bankr's LLM gateway; `notice-decoder` and `lease-scan` ask Jev, TypeSafe's System One
 model, typed questions about each clause through OpenRouter's Decisions API and gets back
 calibrated probabilities, not prose.
 
@@ -46,7 +47,7 @@ two model keys, stored on Bankr.
 ## Repository layout
 
 ```
-x402/<service>/index.ts    the four handlers, each self-contained (Bankr deploys them one by one)
+x402/<service>/index.ts    the five handlers, each self-contained (Bankr deploys them one by one)
 bankr.x402.json            prices, descriptions and JSON schemas; the site imports this file
 web/                       Vite + React + Tailwind site; wagmi + viem + @x402/fetch for payments
 scripts/dev.mjs            runs the handlers locally on :8787 with CORS, no payment layer
@@ -75,7 +76,7 @@ so they cannot drift from the deployed prices and schemas:
 |---|---|
 | `/llms.txt` | Plain-language guide for any agent that can read a URL |
 | `/skill.md` and `/.well-known/agent-skills/` | SKILL.md: when to use which tool, inputs, outputs, rules |
-| `/openapi.json` | OpenAPI 3.1 for the four endpoints, with the x402 price on each operation |
+| `/openapi.json` | OpenAPI 3.1 for the five endpoints, with the x402 price on each operation |
 | `/.well-known/agent-card.json` | A2A-style agent card |
 
 The skill teaches the agent to collect the inputs, quote the price, pay with `bankr x402 call`
@@ -104,8 +105,8 @@ Fork it, point it at your wallet, and the whole loop is yours.
 npm install
 bankr login                          # Bankr CLI, read-write key with the Wallet API enabled
 bankr x402 env set LLM_GATEWAY_KEY=bk_...   # a SEPARATE key with only the LLM gateway enabled
-bankr x402 env set OPENROUTER_API_KEY=sk-or-v1-...   # for lease-scan: openrouter.ai/keys, calls ~typesafe/jev-latest
-bankr x402 deploy                    # prints the four URLs
+bankr x402 env set OPENROUTER_API_KEY=sk-or-v1-...   # for notice-decoder and lease-scan: openrouter.ai/keys, calls ~typesafe/jev-latest
+bankr x402 deploy                    # prints the five URLs
 bankr x402 list                      # requests and revenue
 ```
 
@@ -145,7 +146,7 @@ Set `VITE_API_BASE=http://localhost:8787` in `web/.env` and the site calls the l
 with no payment step. Without `LLM_GATEWAY_KEY` exported in the shell the handlers answer 500
 after validation, which is enough to work on the UI. Export it to get real output.
 
-`lease-scan` needs `OPENROUTER_API_KEY`. Without one, run `node scripts/jev-stub.mjs` and export
+`notice-decoder` and `lease-scan` need `OPENROUTER_API_KEY`. Without one, run `node scripts/jev-stub.mjs` and export
 `JEV_API_URL=http://localhost:8788/api/alpha/decisions OPENROUTER_API_KEY=x`: the stub answers
 with keyword heuristics in the real response shape.
 
@@ -179,7 +180,7 @@ Checks before a PR: `npm run typecheck && npm run build`.
 
 ## Launch tweet
 
-> Rent Relief Bot is live. Four tenant tools, paid per call in USDC on Base, no account, no gas:
+> Rent Relief Bot is live. Five tenant tools, paid per call in USDC on Base, no account, no gas:
 > a rent-increase letter ($0.25), lease-clause red flags ($0.10), your state's tenant rights ($0.05).
 > Or skip the site: point your AI agent at rentrelief.markushaas.com and it does the rest.
 > Open source → github.com/markusbug/rent-relief-bot

@@ -5,6 +5,7 @@ import { Card } from "../ui";
 import { RentLetterForm } from "./RentLetterForm";
 import { LeaseClauseForm } from "./LeaseClauseForm";
 import { LeaseScanForm } from "./LeaseScanForm";
+import { NoticeDecoderForm } from "./NoticeDecoderForm";
 import { TenantRightsForm } from "./TenantRightsForm";
 
 const IDS = SERVICE_LIST.map((s) => s.id);
@@ -42,6 +43,7 @@ export function ToolTabs() {
         </div>
       </div>
       <Card>
+        {active === "notice-decoder" && <NoticeDecoderForm />}
         {active === "rent-letter" && <RentLetterForm />}
         {active === "lease-clause" && <LeaseClauseForm />}
         {active === "lease-scan" && <LeaseScanForm />}

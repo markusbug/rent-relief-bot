@@ -1,6 +1,6 @@
 {
   "name": "Rent Relief Bot",
-  "description": "Pay-per-call tenant tools: landlord letters, lease-clause red flags, whole-lease scan, state tenant rights. USDC on Base via x402.",
+  "description": "Pay-per-call tenant tools: notice decoder, landlord letters, lease-clause red flags, whole-lease scan, state tenant rights. USDC on Base via x402.",
   "url": "https://rentrelief.markushaas.com",
   "version": "1.0.0",
   "documentationUrl": "https://rentrelief.markushaas.com/skill.md",
@@ -19,6 +19,19 @@
     "application/json"
   ],
   "skills": [
+    {
+      "id": "notice-decoder",
+      "name": "notice-decoder",
+      "description": "paste anything your landlord sent you (letter, email, text). One Jev call says what kind of notice it is, how urgent, whether it threatens something landlords cannot do, and which tool to use next. Typed decisions, no text generation.",
+      "tags": [
+        "tenant",
+        "housing",
+        "x402"
+      ],
+      "examples": [
+        "bankr x402 call https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad/notice-decoder -X POST --body '{\"notice\":\"hey its mike the landlord. u still havent paid for this month. if i dont have it by friday im changing the locks and putting ur stuff on the curb. also ur always complaining to the city about the heat so dont expect me to renew\",\"state\":\"NY\"}'"
+      ]
+    },
     {
       "id": "rent-letter",
       "name": "rent-letter",

@@ -4,7 +4,7 @@
     "title": "Rent Relief Bot",
     "version": "1.0.0",
     "summary": "Pay-per-call tenant tools on Base via x402.",
-    "description": "Rent-increase, repair and deposit letters; lease-clause red flags; whole-lease scan; state tenant rights. Each call is paid in USDC through the x402 protocol; there is no API key. Informational only, not legal advice.",
+    "description": "Notice decoder; rent-increase, repair and deposit letters; lease-clause red flags; whole-lease scan; state tenant rights. Each call is paid in USDC through the x402 protocol; there is no API key. Informational only, not legal advice.",
     "license": {
       "name": "MIT",
       "url": "https://github.com/markusbug/rent-relief-bot/blob/main/LICENSE"
@@ -24,6 +24,220 @@
     }
   ],
   "paths": {
+    "/notice-decoder": {
+      "post": {
+        "operationId": "noticeDecoder",
+        "summary": "paste anything your landlord sent you (letter, email, text). One Jev call says what kind of notice it is, how urgent, whether it threatens something landlords cannot do, and which tool to use next. Typed decisions, no text generation.",
+        "description": "Costs $0.02 USDC per call via x402 (HTTP 402 challenge, USDC TransferWithAuthorization on Base, chain 8453). Pay with `bankr x402 call` or any x402 v2 client.",
+        "x-x402": {
+          "price": "0.02",
+          "currency": "USDC",
+          "network": "eip155:8453",
+          "scheme": "exact"
+        },
+        "responses": {
+          "200": {
+            "description": "Result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "rent_increase",
+                        "pay_or_quit",
+                        "cure_or_quit",
+                        "termination_or_nonrenewal",
+                        "court_filing",
+                        "entry_notice",
+                        "fee_or_charge",
+                        "deposit_statement",
+                        "repair_or_maintenance",
+                        "renewal_offer",
+                        "warning_or_rules",
+                        "other"
+                      ]
+                    },
+                    "kind_label": {
+                      "type": "string"
+                    },
+                    "kind_confidence": {
+                      "type": "number"
+                    },
+                    "alternatives": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string"
+                          },
+                          "label": {
+                            "type": "string"
+                          },
+                          "probability": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    },
+                    "urgency": {
+                      "type": "integer",
+                      "description": "0 low … 3 urgent"
+                    },
+                    "urgency_label": {
+                      "type": "string",
+                      "enum": [
+                        "low",
+                        "medium",
+                        "high",
+                        "urgent"
+                      ]
+                    },
+                    "urgency_confidence": {
+                      "type": "number"
+                    },
+                    "flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "label": {
+                            "type": "string"
+                          },
+                          "probability": {
+                            "type": "number"
+                          },
+                          "why": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "what_it_means": {
+                      "type": "string"
+                    },
+                    "do_next": {
+                      "type": "string"
+                    },
+                    "get_help_now": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Set when the tenant should contact legal aid today"
+                    },
+                    "mentions": {
+                      "type": "object",
+                      "properties": {
+                        "dates": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "amounts": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "day_counts": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "next_tool": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "input": {
+                          "type": "object"
+                        },
+                        "url": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "model": {
+                      "type": "string"
+                    },
+                    "generated_at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (not charged)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required. The `payment-required` header carries the x402 v2 requirements."
+          },
+          "502": {
+            "description": "Upstream model failure (not charged). Retry once."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "notice": {
+                    "type": "string",
+                    "description": "The text you received, as-is (40 to 12000 chars). Letter, email, text message, or a court paper."
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "US state, e.g. CA or California"
+                  }
+                },
+                "required": [
+                  "notice",
+                  "state"
+                ]
+              },
+              "example": {
+                "notice": "hey its mike the landlord. u still havent paid for this month. if i dont have it by friday im changing the locks and putting ur stuff on the curb. also ur always complaining to the city about the heat so dont expect me to renew",
+                "state": "NY"
+              }
+            }
+          }
+        }
+      }
+    },
     "/rent-letter": {
       "post": {
         "operationId": "rentLetter",

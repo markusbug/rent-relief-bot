@@ -2,7 +2,7 @@
   "skills": [
     {
       "name": "rent-relief-bot",
-      "description": "Help a tenant deal with a landlord: rent-increase, repair and deposit letters, lease-clause red flags, a whole-lease scan, and state tenant rights, paid per call in USDC on Base via x402.",
+      "description": "Help a tenant deal with a landlord: decode any notice, rent-increase, repair and deposit letters, lease-clause red flags, a whole-lease scan, and state tenant rights, paid per call in USDC on Base via x402.",
       "files": [
         "SKILL.md"
       ]
