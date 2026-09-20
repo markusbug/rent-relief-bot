@@ -24,6 +24,8 @@ export const siteConfig = {
   buyRrbUrl:
     (env.VITE_BUY_RRB_URL as string | undefined) ??
     `https://bankr.bot/terminal/trade?out=${rrbAddress}&chain=base`,
+  jevUrl: "https://openrouter.ai/~typesafe/jev-latest",
+  typesafeUrl: "https://typesafe.ai",
   buybackLedgerUrl: `${githubUrl}/blob/main/scripts/buyback-state.json`,
   baseRpcUrl: env.VITE_BASE_RPC_URL as string | undefined,
   cbWalletPreference: ((env.VITE_CB_WALLET_PREFERENCE as string | undefined) ?? "eoaOnly") as

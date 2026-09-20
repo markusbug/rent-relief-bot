@@ -11,11 +11,12 @@
   <text x="156" y="118" font-family="DejaVu Sans, Inter, Arial, sans-serif" font-size="34" font-weight="bold" fill="#ffffff">Rent Relief Bot</text>
   <text x="72" y="270" font-family="DejaVu Sans, Inter, Arial, sans-serif" font-size="66" font-weight="bold" fill="#ffffff">Your landlord has a lawyer.</text>
   <text x="72" y="350" font-family="DejaVu Sans, Inter, Arial, sans-serif" font-size="66" font-weight="bold" fill="#22d3ee">Now you have a bot.</text>
-  <text x="72" y="420" font-family="DejaVu Sans, Inter, Arial, sans-serif" font-size="28" fill="#94a3b8">Rent-increase letters · lease red flags · tenant rights by state</text>
+  <text x="72" y="420" font-family="DejaVu Sans, Inter, Arial, sans-serif" font-size="28" fill="#94a3b8">Whole-lease scan · rent-increase letters · lease red flags · tenant rights</text>
   <g font-family="DejaVu Sans, Inter, Arial, sans-serif" font-size="22" fill="#e2e8f0">
     <rect x="72" y="480" width="250" height="52" rx="26" fill="#0f172a" stroke="#1e293b"/><text x="197" y="514" text-anchor="middle">Pay per call in USDC</text>
     <rect x="338" y="480" width="240" height="52" rx="26" fill="#0f172a" stroke="#1e293b"/><text x="458" y="514" text-anchor="middle">No gas, no account</text>
     <rect x="594" y="480" width="190" height="52" rx="26" fill="#0f172a" stroke="#1e293b"/><text x="689" y="514" text-anchor="middle">Open source</text>
+    <rect x="800" y="480" width="250" height="52" rx="26" fill="#2e1065" stroke="#7c3aed"/><text x="925" y="514" text-anchor="middle" fill="#ddd6fe" font-weight="bold">Powered by Jev</text>
   </g>
   <text x="1128" y="580" font-family="DejaVu Sans Mono, monospace" font-size="22" text-anchor="end" fill="#64748b">rentrelief.markushaas.com</text>
 </svg>

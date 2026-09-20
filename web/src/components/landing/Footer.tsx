@@ -11,7 +11,7 @@ export function Footer() {
           </p>
           <p>
             <strong className="text-slate-300">Privacy.</strong> This site has no backend and no analytics. What you type is sent to the tool endpoint,
-            processed by an LLM gateway, and returned. Do not include social security numbers, bank details or other secrets.
+            processed by a model (Claude for the letters, Jev for the lease scan), and returned. Do not include social security numbers, bank details or other secrets.
           </p>
         </div>
         <div className="flex flex-col gap-1 text-slate-400">

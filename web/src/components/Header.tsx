@@ -12,6 +12,7 @@ export function Header() {
         <nav className="hidden items-center gap-5 text-sm text-slate-400 md:flex">
           <a href="#tools" className="hover:text-white">Tools</a>
           <a href="#how" className="hover:text-white">How it works</a>
+          <a href="#jev" className="hover:text-white">Jev</a>
           <a href="#rrb" className="hover:text-white">$RRB</a>
           <a href="#agents" className="hover:text-white">Bring your agent</a>
           <a href={siteConfig.githubUrl} target="_blank" rel="noreferrer" className="hover:text-white">GitHub</a>

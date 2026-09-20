@@ -2,6 +2,10 @@
 
 **Your landlord has a lawyer. Now you have a bot.**
 
+**New: a whole-lease scan powered by [Jev](https://typesafe.ai), TypeSafe's System One model, via
+[OpenRouter](https://openrouter.ai/~typesafe/jev-latest).** Paste a lease, get every clause scored and
+ranked worst first in about a second. Jev returns typed decisions, not text, so it cannot invent a law.
+
 Four tenant tools, paid per call in USDC on Base through [x402](https://x402.org). No account,
 no subscription, no gas. Humans use them at **[rentrelief.markushaas.com](https://rentrelief.markushaas.com)**.
 AI agents use them by being pointed at the same domain: it publishes a skill, an OpenAPI

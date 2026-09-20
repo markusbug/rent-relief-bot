@@ -7,8 +7,16 @@ const host = new URL(siteConfig.siteUrl).host;
 export function Hero() {
   return (
     <section id="top" className="pt-14 pb-10 sm:pt-20 sm:pb-14">
-      <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Live on Base · pay per call · works with your AI agent · open source
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Live on Base · pay per call · works with your AI agent · open source
+        </div>
+        <a
+          href="#jev"
+          className="inline-flex items-center gap-2 rounded-full border border-violet-400/40 bg-violet-500/10 px-3 py-1 text-xs font-semibold text-violet-200 hover:bg-violet-500/20"
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-violet-400" /> New: whole-lease scan, powered by Jev →
+        </a>
       </div>
       <h1 className="max-w-3xl text-4xl font-black tracking-tight text-white sm:text-6xl">
         Your landlord has a lawyer. <span className="text-brand-400">Now you have a bot.</span>
