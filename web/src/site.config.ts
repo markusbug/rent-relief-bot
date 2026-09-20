@@ -23,7 +23,7 @@ export const siteConfig = {
   rrbSymbol: "RRB",
   buyRrbUrl:
     (env.VITE_BUY_RRB_URL as string | undefined) ??
-    `https://app.uniswap.org/swap?chain=base&outputCurrency=${rrbAddress}`,
+    `https://bankr.bot/terminal/trade?out=${rrbAddress}&chain=base`,
   buybackLedgerUrl: `${githubUrl}/blob/main/scripts/buyback-state.json`,
   baseRpcUrl: env.VITE_BASE_RPC_URL as string | undefined,
   cbWalletPreference: ((env.VITE_CB_WALLET_PREFERENCE as string | undefined) ?? "eoaOnly") as
