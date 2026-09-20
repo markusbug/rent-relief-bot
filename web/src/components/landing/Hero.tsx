@@ -22,7 +22,7 @@ export function Hero() {
           Or point your agent at {host} →
         </a>
       </div>
-      <div className="mt-8 grid gap-3 sm:grid-cols-3">
+      <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {SERVICE_LIST.map((s) => (
           <a
             key={s.id}

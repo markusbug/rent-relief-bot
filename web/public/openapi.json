@@ -4,7 +4,7 @@
     "title": "Rent Relief Bot",
     "version": "1.0.0",
     "summary": "Pay-per-call tenant tools on Base via x402.",
-    "description": "Rent-increase, repair and deposit letters; lease-clause red flags; state tenant rights. Each call is paid in USDC through the x402 protocol; there is no API key. Informational only, not legal advice.",
+    "description": "Rent-increase, repair and deposit letters; lease-clause red flags; whole-lease scan; state tenant rights. Each call is paid in USDC through the x402 protocol; there is no API key. Informational only, not legal advice.",
     "license": {
       "name": "MIT",
       "url": "https://github.com/markusbug/rent-relief-bot/blob/main/LICENSE"
@@ -282,6 +282,178 @@
               "example": {
                 "clause": "Tenant shall be responsible for all repairs and maintenance of the premises, regardless of cause, and waives any claim against Landlord for habitability.",
                 "state": "NY"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lease-scan": {
+      "post": {
+        "operationId": "leaseScan",
+        "summary": "scan a whole residential lease and rank the clauses a tenant should push back on before signing. Every clause is classified by Jev (TypeSafe's System One model): typed decisions with calibrated confidence, no text generation, no hallucinated law.",
+        "description": "Costs $0.50 USDC per call via x402 (HTTP 402 challenge, USDC TransferWithAuthorization on Base, chain 8453). Pay with `bankr x402 call` or any x402 v2 client.",
+        "x-x402": {
+          "price": "0.50",
+          "currency": "USDC",
+          "network": "eip155:8453",
+          "scheme": "exact"
+        },
+        "responses": {
+          "200": {
+            "description": "Result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "summary": {
+                      "type": "object",
+                      "properties": {
+                        "clauses_scanned": {
+                          "type": "integer"
+                        },
+                        "flagged": {
+                          "type": "integer"
+                        },
+                        "serious": {
+                          "type": "integer"
+                        },
+                        "topics": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "integer"
+                          }
+                        },
+                        "overall": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "findings": {
+                      "type": "array",
+                      "description": "Clauses that need a look, worst first",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "clause_number": {
+                            "type": "integer"
+                          },
+                          "topic": {
+                            "type": "string"
+                          },
+                          "risk": {
+                            "type": "integer",
+                            "description": "0 standard … 4 severe"
+                          },
+                          "risk_label": {
+                            "type": "string",
+                            "enum": [
+                              "standard",
+                              "minor",
+                              "one-sided",
+                              "serious",
+                              "severe"
+                            ]
+                          },
+                          "confidence": {
+                            "type": "number"
+                          },
+                          "flags": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "label": {
+                                  "type": "string"
+                                },
+                                "probability": {
+                                  "type": "number"
+                                },
+                                "why": {
+                                  "type": "string"
+                                },
+                                "ask": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "excerpt": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "next_step": {
+                      "type": "string"
+                    },
+                    "disclaimer": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "model": {
+                      "type": "string"
+                    },
+                    "generated_at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (not charged)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required. The `payment-required` header carries the x402 v2 requirements."
+          },
+          "502": {
+            "description": "Upstream model failure (not charged). Retry once."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lease": {
+                    "type": "string",
+                    "description": "Full lease text, plain text (200 to 60000 chars). Paste it as-is; the scan splits it into clauses."
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "US state, e.g. CA or California"
+                  }
+                },
+                "required": [
+                  "lease",
+                  "state"
+                ]
+              },
+              "example": {
+                "lease": "RESIDENTIAL LEASE AGREEMENT\n\n1. TERM. Twelve months, renewing automatically for further twelve-month terms unless Tenant gives 90 days written notice.\n\n2. RENT. $2,500 monthly. Late rent incurs $150 plus $25 per day.\n\n3. DEFAULT. On any default Landlord may change the locks and remove Tenant's belongings without court order.\n\n4. REPAIRS. Tenant is responsible for all repairs regardless of cause.",
+                "state": "CA"
               }
             }
           }

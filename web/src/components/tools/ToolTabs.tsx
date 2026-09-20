@@ -4,6 +4,7 @@ import { formatPrice } from "../../lib/format";
 import { Card } from "../ui";
 import { RentLetterForm } from "./RentLetterForm";
 import { LeaseClauseForm } from "./LeaseClauseForm";
+import { LeaseScanForm } from "./LeaseScanForm";
 import { TenantRightsForm } from "./TenantRightsForm";
 
 const IDS = SERVICE_LIST.map((s) => s.id);
@@ -43,6 +44,7 @@ export function ToolTabs() {
       <Card>
         {active === "rent-letter" && <RentLetterForm />}
         {active === "lease-clause" && <LeaseClauseForm />}
+        {active === "lease-scan" && <LeaseScanForm />}
         {active === "tenant-rights" && <TenantRightsForm />}
       </Card>
     </div>

@@ -13,9 +13,10 @@ interface Props<T> {
   formValid: boolean;
   onRun: () => void;
   onReset: () => void;
+  runningLabel?: string;
 }
 
-export function PayButton<T>({ svc, label, state, formValid, onRun, onReset }: Props<T>) {
+export function PayButton<T>({ svc, label, state, formValid, onRun, onReset, runningLabel = "Writing…" }: Props<T>) {
   const { address, isConnected, chainId } = useAccount();
   const { connectors, connect, isPending: connecting } = useConnect();
   const { switchChain, isPending: switching } = useSwitchChain();
@@ -25,7 +26,7 @@ export function PayButton<T>({ svc, label, state, formValid, onRun, onReset }: P
   const price = formatPrice(svc.price);
 
   if (busy) {
-    const text = state.status === "signing" ? "Confirm in your wallet" : state.status === "running" ? "Writing…" : "Requesting…";
+    const text = state.status === "signing" ? "Confirm in your wallet" : state.status === "running" ? runningLabel : "Requesting…";
     return (
       <Button type="button" disabled className="w-full sm:w-auto">
         <Spinner /> {text}

@@ -2,7 +2,7 @@ import manifest from "../../../bankr.x402.json";
 import { parseUnits } from "viem";
 import { siteConfig } from "../site.config";
 
-export type ServiceId = "rent-letter" | "lease-clause" | "tenant-rights";
+export type ServiceId = "rent-letter" | "lease-clause" | "lease-scan" | "tenant-rights";
 
 export interface ServiceDef {
   id: ServiceId;
@@ -18,6 +18,7 @@ export interface ServiceDef {
 const TITLES: Record<ServiceId, { title: string; short: string }> = {
   "rent-letter": { title: "Rent letter", short: "Ready-to-send landlord letter" },
   "lease-clause": { title: "Lease clause check", short: "Plain English plus red flags" },
+  "lease-scan": { title: "Whole-lease scan", short: "Every clause ranked, worst first" },
   "tenant-rights": { title: "Tenant rights", short: "Your state, one topic, two minutes" },
 };
 
@@ -46,10 +47,11 @@ function def(id: ServiceId): ServiceDef {
 export const SERVICES: Record<ServiceId, ServiceDef> = {
   "rent-letter": def("rent-letter"),
   "lease-clause": def("lease-clause"),
+  "lease-scan": def("lease-scan"),
   "tenant-rights": def("tenant-rights"),
 };
 
-export const SERVICE_LIST: ServiceDef[] = [SERVICES["rent-letter"], SERVICES["lease-clause"], SERVICES["tenant-rights"]];
+export const SERVICE_LIST: ServiceDef[] = [SERVICES["rent-letter"], SERVICES["lease-clause"], SERVICES["lease-scan"], SERVICES["tenant-rights"]];
 
 export const MAX_PRICE_USD = SERVICE_LIST.reduce((m, s) => Math.max(m, Number(s.price)), 0);
 
@@ -121,3 +123,43 @@ export interface RightsOut {
   topic: string;
   generated_at: string;
 }
+
+export interface ScanFlag {
+  id: string;
+  label: string;
+  probability: number;
+  why: string;
+  ask: string;
+}
+
+export interface ScanFinding {
+  clause_number: number;
+  topic: string;
+  risk: 0 | 1 | 2 | 3 | 4;
+  risk_label: "standard" | "minor" | "one-sided" | "serious" | "severe";
+  confidence: number;
+  flags: ScanFlag[];
+  excerpt: string;
+}
+
+export interface ScanOut {
+  summary: { clauses_scanned: number; flagged: number; serious: number; topics: Record<string, number>; overall: string };
+  findings: ScanFinding[];
+  next_step: string;
+  disclaimer: string;
+  state: string;
+  model: string;
+  generated_at: string;
+}
+
+export const SCAN_TOPIC_LABELS: Record<string, string> = {
+  rent_and_fees: "Rent and fees",
+  deposit: "Deposit",
+  repairs_and_maintenance: "Repairs",
+  entry_and_privacy: "Entry",
+  term_renewal_termination: "Term and renewal",
+  use_and_rules: "Use and rules",
+  liability_and_legal: "Legal terms",
+  utilities_and_services: "Utilities",
+  other: "Other",
+};

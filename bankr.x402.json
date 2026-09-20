@@ -185,6 +185,141 @@
         "legal-info"
       ]
     },
+    "lease-scan": {
+      "price": "0.50",
+      "description": "Rent Relief Bot: scan a whole residential lease and rank the clauses a tenant should push back on before signing. Every clause is classified by Jev (TypeSafe's System One model): typed decisions with calibrated confidence, no text generation, no hallucinated law.",
+      "methods": [
+        "POST"
+      ],
+      "tags": [
+        "tenants",
+        "housing",
+        "lease",
+        "x402",
+        "jev",
+        "typesafe"
+      ],
+      "schema": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "lease": {
+              "type": "string",
+              "description": "Full lease text, plain text (200 to 60000 chars). Paste it as-is; the scan splits it into clauses."
+            },
+            "state": {
+              "type": "string",
+              "description": "US state, e.g. CA or California"
+            }
+          },
+          "required": [
+            "lease",
+            "state"
+          ]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "summary": {
+              "type": "object",
+              "properties": {
+                "clauses_scanned": {
+                  "type": "integer"
+                },
+                "flagged": {
+                  "type": "integer"
+                },
+                "serious": {
+                  "type": "integer"
+                },
+                "topics": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer"
+                  }
+                },
+                "overall": {
+                  "type": "string"
+                }
+              }
+            },
+            "findings": {
+              "type": "array",
+              "description": "Clauses that need a look, worst first",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "clause_number": {
+                    "type": "integer"
+                  },
+                  "topic": {
+                    "type": "string"
+                  },
+                  "risk": {
+                    "type": "integer",
+                    "description": "0 standard \u2026 4 severe"
+                  },
+                  "risk_label": {
+                    "type": "string",
+                    "enum": [
+                      "standard",
+                      "minor",
+                      "one-sided",
+                      "serious",
+                      "severe"
+                    ]
+                  },
+                  "confidence": {
+                    "type": "number"
+                  },
+                  "flags": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        },
+                        "probability": {
+                          "type": "number"
+                        },
+                        "why": {
+                          "type": "string"
+                        },
+                        "ask": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "excerpt": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "next_step": {
+              "type": "string"
+            },
+            "disclaimer": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            },
+            "generated_at": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "tenant-rights": {
       "price": "0.05",
       "description": "Rent Relief Bot: quick summary of tenant protections in a US state on one topic (deposit, rent_increase, eviction, repairs, entry, lease_break, late_fees, retaliation).",

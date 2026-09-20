@@ -1,6 +1,6 @@
 {
   "name": "Rent Relief Bot",
-  "description": "Pay-per-call tenant tools: landlord letters, lease-clause red flags, state tenant rights. USDC on Base via x402.",
+  "description": "Pay-per-call tenant tools: landlord letters, lease-clause red flags, whole-lease scan, state tenant rights. USDC on Base via x402.",
   "url": "https://rentrelief.markushaas.com",
   "version": "1.0.0",
   "documentationUrl": "https://rentrelief.markushaas.com/skill.md",
@@ -43,6 +43,19 @@
       ],
       "examples": [
         "bankr x402 call https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad/lease-clause -X POST --body '{\"clause\":\"Tenant shall be responsible for all repairs and maintenance of the premises, regardless of cause, and waives any claim against Landlord for habitability.\",\"state\":\"NY\"}'"
+      ]
+    },
+    {
+      "id": "lease-scan",
+      "name": "lease-scan",
+      "description": "scan a whole residential lease and rank the clauses a tenant should push back on before signing. Every clause is classified by Jev (TypeSafe's System One model): typed decisions with calibrated confidence, no text generation, no hallucinated law.",
+      "tags": [
+        "tenant",
+        "housing",
+        "x402"
+      ],
+      "examples": [
+        "bankr x402 call https://x402.bankr.bot/0x68239eb2cf30596eb98388c41cf53c4c289480ad/lease-scan -X POST --body '{\"lease\":\"RESIDENTIAL LEASE AGREEMENT\\n\\n1. TERM. Twelve months, renewing automatically for further twelve-month terms unless Tenant gives 90 days written notice.\\n\\n2. RENT. $2,500 monthly. Late rent incurs $150 plus $25 per day.\\n\\n3. DEFAULT. On any default Landlord may change the locks and remove Tenant's belongings without court order.\\n\\n4. REPAIRS. Tenant is responsible for all repairs regardless of cause.\",\"state\":\"CA\"}'"
       ]
     },
     {
