@@ -2,7 +2,6 @@ import { Header } from "./components/Header";
 import { Hero } from "./components/landing/Hero";
 import { ToolTabs } from "./components/tools/ToolTabs";
 import { HowItWorks } from "./components/landing/HowItWorks";
-import { Flywheel } from "./components/landing/Flywheel";
 import { BringYourAgent } from "./components/landing/BringYourAgent";
 import { Footer } from "./components/landing/Footer";
 
@@ -15,7 +14,6 @@ export default function App() {
         <ToolTabs />
         <BringYourAgent />
         <HowItWorks />
-        <Flywheel />
         <Footer />
       </main>
     </>

@@ -132,6 +132,6 @@ export default async function handler(req: Request): Promise<Response> {
     ...(parsed as object),
     letter_type: body.letter_type,
     generated_at: new Date().toISOString(),
-    powered_by: "Rent Relief Bot ($RRB on Base)",
+    powered_by: "Rent Relief Bot",
   });
 }

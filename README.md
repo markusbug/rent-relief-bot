@@ -6,7 +6,6 @@ Three tenant tools, paid per call in USDC on Base through [x402](https://x402.or
 no subscription, no gas. Humans use them at **[rentrelief.markushaas.com](https://rentrelief.markushaas.com)**.
 AI agents use them by being pointed at the same domain: it publishes a skill, an OpenAPI
 description and `llms.txt`, and every tool is an x402 endpoint the agent can pay for itself.
-Every dollar of revenue is swapped into `$RRB` by a public GitHub Action.
 
 | Tool | Method | Price | What you get |
 |---|---|---|---|
@@ -29,12 +28,11 @@ Every answer carries a not-legal-advice disclaimer and never invents statute num
  x402/<service>/index.ts  -->  llm.bankr.bot  (LLM_GATEWAY_KEY lives only in Bankr's encrypted env)
         |
         v  JSON result
- owner wallet (USDC + $RRB creator fees)  --hourly GitHub Action-->  scripts/buyback.mjs  -->  buys $RRB
 ```
 
 The site is static. It holds no keys and has no backend: the browser talks straight to the
-Bankr endpoint, which allows cross-origin calls. The only secrets in the whole system are the
-LLM key (stored on Bankr) and the buyback key (a GitHub secret).
+Bankr endpoint, which allows cross-origin calls. The only secret in the whole system is the
+LLM key, stored on Bankr.
 
 ## Repository layout
 
@@ -43,11 +41,9 @@ x402/<service>/index.ts    the three handlers, each self-contained (Bankr deploy
 bankr.x402.json            prices, descriptions and JSON schemas; the site imports this file
 web/                       Vite + React + Tailwind site; wagmi + viem + @x402/fetch for payments
 scripts/dev.mjs            runs the handlers locally on :8787 with CORS, no payment layer
-scripts/buyback.mjs        claims RRB creator fees, swaps USDC and WETH into RRB via the Bankr CLI
 scripts/x402-smoke.mjs     dry-runs the x402 flow against any URL without spending
 scripts/gen-agent-files.mjs  writes llms.txt, openapi.json, SKILL.md and .well-known files from bankr.x402.json
 skills/rent-relief-bot/    the agent skill (SKILL.md), installable from GitHub or from the domain
-.github/workflows/buyback.yml   hourly buyback (needs a secret and a repo variable to arm)
 firebase.json              Firebase Hosting config for web/dist
 ```
 
@@ -127,29 +123,6 @@ record it shows for verification and the A records it shows for traffic → wait
 certificate (minutes to an hour). Then set `VITE_SITE_URL` to that host and redeploy so the
 Open Graph tags point at the right place.
 
-### 3. Buyback
-
-Locally:
-
-```
-npm run buyback:dry                  # prints the plan
-npm run buyback                      # claims fees, swaps USDC/WETH above the reserves into RRB
-```
-
-On GitHub Actions (hourly):
-
-1. Create a **dedicated** Bankr API key at bankr.bot/api-keys: read-write, Wallet API on,
-   everything else off. Do not reuse the LLM key or your main key.
-2. Repo *Settings → Secrets → Actions*: add `BANKR_API_KEY`.
-3. Repo *Settings → Variables → Actions*: add `BUYBACK_ENABLED` = `true`. Until it is set the
-   schedule does nothing, so forks stay quiet.
-4. *Actions → RRB buyback → Run workflow* with *dry run* checked to see the plan in the log.
-
-Defaults leave 5 USDC and 0.002 WETH in the wallet, cap each swap at $400, and skip anything
-under $2. Override with repo variables `USDC_RESERVE`, `WETH_RESERVE`, `MAX_SWAP_USD`,
-`MIN_SWAP_USD`, `CLAIM_FEES`, `RRB_ADDRESS`. GitHub pauses scheduled workflows after 60 days
-without repo activity; re-enable from the Actions tab.
-
 ## Local development
 
 ```
@@ -194,7 +167,6 @@ Checks before a PR: `npm run typecheck && npm run build`.
 > Rent Relief Bot is live. Three tenant tools, paid per call in USDC on Base, no account, no gas:
 > a rent-increase letter ($0.25), lease-clause red flags ($0.10), your state's tenant rights ($0.05).
 > Or skip the site: point your AI agent at rentrelief.markushaas.com and it does the rest.
-> Every dollar buys back $RRB, hourly, in public.
 > Open source → github.com/markusbug/rent-relief-bot
 > Try it → rentrelief.markushaas.com
 

@@ -3,7 +3,7 @@
 > Pay-per-call tools for US tenants: a ready-to-send landlord letter, a lease-clause check with
 > red flags, and a summary of state tenant rights. Each call costs $0.05 to $0.25 in USDC on
 > Base, paid through the x402 protocol. No account, no API key; payment is the authentication.
-> Open source (MIT). Revenue buys back the $RRB token on Base.
+> Open source (MIT).
 
 If you are an agent helping a user with a landlord, rent, lease, deposit, eviction or repair
 problem: install the skill or read the OpenAPI description, ask the user for the inputs the

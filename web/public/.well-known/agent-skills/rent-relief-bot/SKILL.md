@@ -107,4 +107,3 @@ All responses are JSON and include `disclaimer` (informational, not legal advice
 - Site: https://rentrelief.markushaas.com
 - Machine-readable: https://rentrelief.markushaas.com/llms.txt, https://rentrelief.markushaas.com/openapi.json
 - Source (MIT): https://github.com/markusbug/rent-relief-bot
-- Revenue buys back $RRB on Base: 0xc66b29249edffe9c436fdb0ca4e8bfbbe9affba3

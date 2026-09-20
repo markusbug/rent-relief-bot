@@ -1,12 +1,13 @@
-name: RRB buyback
+name: Recycle revenue
 
-# Recycles x402 revenue (USDC) and claimed creator fees (WETH) into $RRB.
+# Swaps what the x402 endpoints have earned (and nothing else) into RRB, hourly.
+# scripts/buyback.mjs compares all-time endpoint revenue with scripts/buyback-state.json
+# and swaps the difference; a successful swap commits the updated state file.
 # Schedule: hourly at :07 UTC (GitHub cron is best-effort and may lag).
 # Needs:
-#   secret   BANKR_API_KEY     a dedicated Bankr key with ONLY the Wallet API enabled, read-write
+#   secret   BANKR_API_KEY     a dedicated Bankr key: read-write, Wallet API on, x402 on
 #   variable BUYBACK_ENABLED   set to "true" to arm the hourly schedule (forks stay silent)
-# Optional variables override script defaults: RRB_ADDRESS, USDC_RESERVE, WETH_RESERVE,
-# MAX_SWAP_USD, MIN_SWAP_USD, CLAIM_FEES.
+# Optional variables override script defaults: RRB_ADDRESS, USDC_RESERVE, MAX_SWAP_USD, MIN_SWAP_USD.
 
 on:
   schedule:
@@ -19,7 +20,7 @@ on:
         default: true
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: buyback
@@ -45,11 +46,20 @@ jobs:
           bankr login --api-key "$BANKR_API_KEY"
       - name: Run buyback
         env:
+          BANKR_API_KEY: ${{ secrets.BANKR_API_KEY }}
           DRY_RUN: ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '1' || '0' }}
           RRB_ADDRESS: ${{ vars.RRB_ADDRESS }}
           USDC_RESERVE: ${{ vars.USDC_RESERVE }}
-          WETH_RESERVE: ${{ vars.WETH_RESERVE }}
           MAX_SWAP_USD: ${{ vars.MAX_SWAP_USD }}
           MIN_SWAP_USD: ${{ vars.MIN_SWAP_USD }}
-          CLAIM_FEES: ${{ vars.CLAIM_FEES }}
         run: node scripts/buyback.mjs
+      - name: Record the swap
+        run: |
+          if git diff --quiet scripts/buyback-state.json; then exit 0; fi
+          total=$(node -p 'require("./scripts/buyback-state.json").recycledUsd.toFixed(2)')
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/buyback-state.json
+          git commit -m "Recycle revenue: total \$${total}"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

@@ -35,7 +35,6 @@ const env = { ...readEnv(".env.example"), ...readEnv(".env"), ...process.env };
 const OWNER = env.OWNER_ADDRESS || env.VITE_OWNER_ADDRESS;
 const SITE = (env.SITE_URL || env.VITE_SITE_URL || "https://rentrelief.markushaas.com").replace(/\/$/, "");
 const GITHUB = env.GITHUB_URL || env.VITE_GITHUB_URL || "https://github.com/markusbug/rent-relief-bot";
-const RRB = env.VITE_RRB_ADDRESS || "0xc66b29249edffe9c436fdb0ca4e8bfbbe9affba3";
 if (!OWNER) throw new Error("OWNER_ADDRESS not set (web/.env VITE_OWNER_ADDRESS)");
 const API = `https://x402.bankr.bot/${OWNER}`;
 const HOST = new URL(SITE).host;
@@ -181,7 +180,6 @@ All responses are JSON and include \`disclaimer\` (informational, not legal advi
 - Site: ${SITE}
 - Machine-readable: ${SITE}/llms.txt, ${SITE}/openapi.json
 - Source (MIT): ${GITHUB}
-- Revenue buys back $RRB on Base: ${RRB}
 `;
 
 write("skills/rent-relief-bot/SKILL.md", skillMd);
@@ -213,7 +211,7 @@ write(
 > Pay-per-call tools for US tenants: a ready-to-send landlord letter, a lease-clause check with
 > red flags, and a summary of state tenant rights. Each call costs $0.05 to $0.25 in USDC on
 > Base, paid through the x402 protocol. No account, no API key; payment is the authentication.
-> Open source (MIT). Revenue buys back the $RRB token on Base.
+> Open source (MIT).
 
 If you are an agent helping a user with a landlord, rent, lease, deposit, eviction or repair
 problem: install the skill or read the OpenAPI description, ask the user for the inputs the

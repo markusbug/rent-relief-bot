@@ -87,6 +87,6 @@ export default async function handler(req: Request): Promise<Response> {
     state,
     topic,
     generated_at: new Date().toISOString(),
-    powered_by: "Rent Relief Bot ($RRB on Base)",
+    powered_by: "Rent Relief Bot",
   });
 }
